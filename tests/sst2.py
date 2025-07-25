@@ -494,4 +494,4 @@ def main():
         print(f"First 10 beta values: {betas[:10]}")
 
 if __name__ == "__main__":
-    main()
+    main() 

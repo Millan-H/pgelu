@@ -20,7 +20,7 @@ class ParametricGELU2d(nn.Module):
         super().__init__()
         self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size, padding=padding)
         # Use GroupNorm as LayerNorm alternative for 2D
-        self.norm = nn.GroupNorm(1, out_channels)  # 1 group = LayerNorm-like
+        self.norm = nn.GroupNorm(1, out_channels)
         self.alphas = nn.Parameter(torch.normal(mean=0, std=0.05, size=(out_channels,)))
         self.betas = nn.Parameter(torch.normal(mean=1, std=0.05, size=(out_channels,)))
         
@@ -30,7 +30,7 @@ class ParametricGELU2d(nn.Module):
         # Reshape for broadcasting: (batch, channels, height, width)
         alphas = self.alphas.view(1, -1, 1, 1)
         betas = self.betas.view(1, -1, 1, 1)
-        gelu_input = betas * (x - alphas)
+        gelu_input = betas * (x)
         return F.gelu(gelu_input)
 
 class ParametricGELU(nn.Module):
@@ -44,7 +44,7 @@ class ParametricGELU(nn.Module):
     def forward(self, x):
         linear_out = self.linear(x)
         normalized_out = self.layernorm(linear_out)
-        gelu_input = self.betas * (normalized_out - self.alphas)
+        gelu_input = self.betas * (normalized_out)
         return F.gelu(gelu_input)
 
 def load_cifar_data():
@@ -236,7 +236,7 @@ def setup_plot():
     plt.ion()  # Turn on interactive mode
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
     
-    ax1.set_title('Parametric Network Loss Curves')
+    ax1.set_title('Parametric Network (Beta Only) Loss Curves')
     ax1.set_xlabel('Epoch')
     ax1.set_ylabel('Loss')
     ax1.grid(True, alpha=0.3)
@@ -257,7 +257,7 @@ def update_plot(fig, ax1, ax2):
     ax2.clear()
     
     # Setup axes again
-    ax1.set_title('Parametric Network Loss Curves')
+    ax1.set_title('Parametric Network (Beta Only) Loss Curves')
     ax1.set_xlabel('Epoch')
     ax1.set_ylabel('Loss')
     ax1.grid(True, alpha=0.3)

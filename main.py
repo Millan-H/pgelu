@@ -31,3 +31,4 @@ class ParametricGELU(nn.Module):
         normalized_out = self.layernorm(linear_out)
         gelu_input = self.betas * (normalized_out - self.alphas)
         return F.gelu(gelu_input)
+
